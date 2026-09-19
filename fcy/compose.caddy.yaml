@@ -1,0 +1,41 @@
+---
+services:
+  opencloud:
+    environment:
+      # OpenCloud otherwise binds its proxy to loopback, which is unreachable
+      # from Caddy on the shared Docker network.
+      PROXY_HTTP_ADDR: "0.0.0.0:9200"
+    labels:
+      caddy: "${OC_DOMAIN:-dev-cloud.fullcourseyellow.com}"
+      caddy.import: "${CADDY_ACME_SNIPPET:-dns-acme-fcy}"
+      caddy.reverse_proxy: "{{upstreams 9200}}"
+
+      harbordns.hostname: "${OC_DOMAIN:-dev-cloud.fullcourseyellow.com}"
+      harbordns.type: A
+      harbordns.cloudflare.proxied: "true"
+      harbordns.conflict: update
+      harbordns.auto-remove: "${HARBORDNS_AUTO_REMOVE:-true}"
+      harbordns.cloudflare.comment: OpenCloud
+    networks:
+      opencloud-net:
+      caddy_net:
+
+  euro-office:
+    labels:
+      caddy: "${EURO_OFFICE_DOMAIN:-dev-office.fullcourseyellow.com}"
+      caddy.import: "${CADDY_ACME_SNIPPET:-dns-acme-fcy}"
+      caddy.reverse_proxy: "{{upstreams 80}}"
+
+      harbordns.hostname: "${EURO_OFFICE_DOMAIN:-dev-office.fullcourseyellow.com}"
+      harbordns.type: A
+      harbordns.cloudflare.proxied: "true"
+      harbordns.conflict: update
+      harbordns.auto-remove: "${HARBORDNS_AUTO_REMOVE:-true}"
+      harbordns.cloudflare.comment: Euro Office
+    networks:
+      opencloud-net:
+      caddy_net:
+
+networks:
+  caddy_net:
+    external: true
