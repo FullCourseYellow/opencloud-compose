@@ -1,0 +1,130 @@
+{
+  "common": {
+    "name": "Velocitas Imperium",
+    "slogan": "Designed by us. Built by you.",
+    "urls": {
+      "accessDeniedHelp": "",
+      "imprint": "",
+      "privacy": "",
+      "accessibility": ""
+    }
+  },
+  "clients": {
+    "android": {},
+    "desktop": {},
+    "ios": {},
+    "web": {
+      "defaults": {
+        "logo": "themes/velocitas-imperium/assets/logo-light.webp",
+        "logoMobile": "themes/velocitas-imperium/assets/logo-mobile-light.webp",
+        "favicon": "themes/velocitas-imperium/assets/favicon.png"
+      },
+      "themes": [
+        {
+          "isDark": false,
+          "label": "VI Light",
+          "background": "themes/velocitas-imperium/assets/hero-light.webp",
+          "designTokens": {
+            "roles": {
+              "primary": "#e30613",
+              "onPrimary": "#ffffff",
+              "primaryContainer": "#ffdad9",
+              "onPrimaryContainer": "#410004",
+              "secondary": "#675c59",
+              "onSecondary": "#ffffff",
+              "secondaryContainer": "#f0ded9",
+              "onSecondaryContainer": "#251916",
+              "tertiary": "#006d3c",
+              "onTertiary": "#ffffff",
+              "tertiaryContainer": "#98f7b7",
+              "onTertiaryContainer": "#00210e",
+              "error": "#ba1a1a",
+              "onError": "#ffffff",
+              "errorContainer": "#ffdad6",
+              "onErrorContainer": "#410002",
+              "background": "#f5f4f0",
+              "onBackground": "#342624",
+              "surface": "#ffffff",
+              "onSurface": "#342624",
+              "surfaceVariant": "#e9e6df",
+              "onSurfaceVariant": "#534b48",
+              "outline": "#706764",
+              "outlineVariant": "#cdc8bf",
+              "shadow": "#000000",
+              "scrim": "#000000",
+              "inverseSurface": "#392e2b",
+              "inverseOnSurface": "#f8eeeb",
+              "inversePrimary": "#ffb3b5",
+              "primaryFixed": "#ffdad9",
+              "onPrimaryFixed": "#410004",
+              "secondaryFixed": "#f0ded9",
+              "onSecondaryFixed": "#251916",
+              "tertiaryFixed": "#98f7b7",
+              "onTertiaryFixed": "#00210e",
+              "surfaceDim": "#ded8d3",
+              "surfaceBright": "#fffaf7",
+              "surfaceContainerLowest": "#ffffff",
+              "surfaceContainerLow": "#faf8f3",
+              "surfaceContainer": "#f5f4f0",
+              "surfaceContainerHigh": "#efede7",
+              "surfaceContainerHighest": "#e9e6df"
+            }
+          }
+        },
+        {
+          "isDark": true,
+          "label": "VI Dark",
+          "logo": "themes/velocitas-imperium/assets/logo-dark.webp",
+          "logoMobile": "themes/velocitas-imperium/assets/logo-mobile-dark.webp",
+          "background": "themes/velocitas-imperium/assets/hero-dark.webp",
+          "designTokens": {
+            "roles": {
+              "primary": "#e30613",
+              "onPrimary": "#ffffff",
+              "primaryContainer": "#93000a",
+              "onPrimaryContainer": "#ffdad9",
+              "secondary": "#d4c2bd",
+              "onSecondary": "#3b2d2a",
+              "secondaryContainer": "#52433f",
+              "onSecondaryContainer": "#f0ded9",
+              "tertiary": "#7bda9d",
+              "onTertiary": "#00391d",
+              "tertiaryContainer": "#00522c",
+              "onTertiaryContainer": "#98f7b7",
+              "error": "#ffb4ab",
+              "onError": "#690005",
+              "errorContainer": "#93000a",
+              "onErrorContainer": "#ffdad6",
+              "background": "#161616",
+              "onBackground": "#f5f4f0",
+              "surface": "#1d1d1d",
+              "onSurface": "#f5f4f0",
+              "surfaceVariant": "#45413e",
+              "onSurfaceVariant": "#d4c3be",
+              "outline": "#9d8d88",
+              "outlineVariant": "#45413e",
+              "shadow": "#000000",
+              "scrim": "#000000",
+              "inverseSurface": "#f5f4f0",
+              "inverseOnSurface": "#342624",
+              "inversePrimary": "#e30613",
+              "primaryFixed": "#ffdad9",
+              "onPrimaryFixed": "#410004",
+              "secondaryFixed": "#f0ded9",
+              "onSecondaryFixed": "#251916",
+              "tertiaryFixed": "#98f7b7",
+              "onTertiaryFixed": "#00210e",
+              "surfaceDim": "#111111",
+              "surfaceBright": "#393837",
+              "surfaceContainerLowest": "#101010",
+              "surfaceContainerLow": "#1d1d1d",
+              "surfaceContainer": "#222222",
+              "surfaceContainerHigh": "#272625",
+              "surfaceContainerHighest": "#302e2c"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
