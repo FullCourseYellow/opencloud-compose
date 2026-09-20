@@ -1,6 +1,10 @@
 ---
 services:
   opencloud:
+    # Keep public HTTPS URLs while routing container traffic through local Caddy,
+    # avoiding external DNS selecting an unreachable IPv6 address.
+    extra_hosts:
+      - "${EURO_OFFICE_DOMAIN:?Set EURO_OFFICE_DOMAIN}=host-gateway"
     environment:
       # OpenCloud otherwise binds its proxy to loopback, which is unreachable
       # from Caddy on the shared Docker network.
@@ -26,6 +30,9 @@ services:
       caddy_net:
 
   euro-office:
+    # Route WOPI callbacks through local Caddy without changing their public URL.
+    extra_hosts:
+      - "${OC_DOMAIN:?Set OC_DOMAIN}=host-gateway"
     environment:
       JWT_SECRET: "${EURO_OFFICE_JWT_SECRET:?Set EURO_OFFICE_JWT_SECRET}"
     labels:
