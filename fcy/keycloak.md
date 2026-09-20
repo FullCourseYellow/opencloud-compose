@@ -1,21 +1,28 @@
 # Keycloak Configuration
 
-OpenCloud uses the existing FCY Keycloak realm for authentication and its own
-private LDAP service for provisioned directory records. A user is added to the
-OpenCloud directory on first successful login.
+Each OpenCloud environment uses a separate FCY Keycloak issuer for
+authentication and its own private LDAP service for provisioned directory
+records. A user is added to that environment's OpenCloud directory on first
+successful login.
 
 ## Realm
 
-| Setting | Value |
-| --- | --- |
-| Keycloak host | `dev-id.fullcourseyellow.com` |
-| Realm | `fullcourseyellow` |
-| Issuer | `https://dev-id.fullcourseyellow.com/realms/fullcourseyellow` |
-| Account page | `https://dev-id.fullcourseyellow.com/realms/fullcourseyellow/account` |
+| Setting | Development | Production |
+| --- | --- | --- |
+| Keycloak host | `dev-id.fullcourseyellow.com` | `id.fullcourseyellow.com` |
+| Realm | `fullcourseyellow` | `fullcourseyellow` |
+| Issuer | `https://dev-id.fullcourseyellow.com/realms/fullcourseyellow` | `https://id.fullcourseyellow.com/realms/fullcourseyellow` |
+| Account page | `https://dev-id.fullcourseyellow.com/realms/fullcourseyellow/account` | `https://id.fullcourseyellow.com/realms/fullcourseyellow/account` |
+
+The matching OpenCloud Stack must use the issuer and account page from the same
+column. Although the realm names and client IDs are identical, the different
+hosts make these separate OIDC issuers. Configure roles, scopes, clients, and
+users independently in each realm. Do not connect production OpenCloud to the
+development issuer.
 
 ## Realm Roles
 
-Create these realm roles:
+Create these realm roles in both environments:
 
 | Keycloak role | OpenCloud role |
 | --- | --- |
@@ -31,8 +38,9 @@ mapping, which can produce surprising privileges.
 
 ## Role Claim
 
-Do not alter the realm's built-in `roles` client scope because other FCY clients
-may depend on its current token structure. Create a dedicated client scope:
+Do not alter either realm's built-in `roles` client scope because other FCY
+clients may depend on its current token structure. Create a dedicated client
+scope in each realm:
 
 | Setting | Value |
 | --- | --- |
@@ -62,7 +70,8 @@ exposing unrelated realm roles.
 
 ## Common Client Settings
 
-Create four separate OpenID Connect clients. Apply these settings to all four:
+Create four separate OpenID Connect clients in each realm. Apply these settings
+to all four:
 
 | Setting | Value |
 | --- | --- |
@@ -79,18 +88,18 @@ clients and discover their client IDs and scopes through OpenCloud WebFinger.
 
 ## Web Client
 
-| Setting | Value |
-| --- | --- |
-| Client ID | `web` |
-| Root URL | `https://dev-cloud.fullcourseyellow.com` |
-| Home URL | `https://dev-cloud.fullcourseyellow.com` |
-| Valid redirect URI | `https://dev-cloud.fullcourseyellow.com/` |
-| Valid redirect URI | `https://dev-cloud.fullcourseyellow.com/oidc-callback.html` |
-| Valid redirect URI | `https://dev-cloud.fullcourseyellow.com/oidc-silent-redirect.html` |
-| Valid post-logout redirect URI | `https://dev-cloud.fullcourseyellow.com/*` |
-| Web origin | `https://dev-cloud.fullcourseyellow.com` |
-| Backchannel logout URL | `https://dev-cloud.fullcourseyellow.com/backchannel_logout` |
-| Backchannel logout session required | On |
+| Setting | Development | Production |
+| --- | --- | --- |
+| Client ID | `web` | `web` |
+| Root URL | `https://dev-cloud.fullcourseyellow.com` | `https://cloud.fullcourseyellow.com` |
+| Home URL | `https://dev-cloud.fullcourseyellow.com` | `https://cloud.fullcourseyellow.com` |
+| Valid redirect URI | `https://dev-cloud.fullcourseyellow.com/` | `https://cloud.fullcourseyellow.com/` |
+| Valid redirect URI | `https://dev-cloud.fullcourseyellow.com/oidc-callback.html` | `https://cloud.fullcourseyellow.com/oidc-callback.html` |
+| Valid redirect URI | `https://dev-cloud.fullcourseyellow.com/oidc-silent-redirect.html` | `https://cloud.fullcourseyellow.com/oidc-silent-redirect.html` |
+| Valid post-logout redirect URI | `https://dev-cloud.fullcourseyellow.com/*` | `https://cloud.fullcourseyellow.com/*` |
+| Web origin | `https://dev-cloud.fullcourseyellow.com` | `https://cloud.fullcourseyellow.com` |
+| Backchannel logout URL | `https://dev-cloud.fullcourseyellow.com/backchannel_logout` | `https://cloud.fullcourseyellow.com/backchannel_logout` |
+| Backchannel logout session required | On | On |
 
 ## Desktop Client
 
@@ -132,14 +141,22 @@ role assignment.
 
 ## Validation
 
-After deployment, verify the issuer metadata:
+After each deployment, select the matching endpoints and verify the issuer
+metadata. For development:
 
 ```bash
 curl --fail --silent --show-error \
   https://dev-id.fullcourseyellow.com/realms/fullcourseyellow/.well-known/openid-configuration
 ```
 
-Verify desktop discovery through OpenCloud:
+For production:
+
+```bash
+curl --fail --silent --show-error \
+  https://id.fullcourseyellow.com/realms/fullcourseyellow/.well-known/openid-configuration
+```
+
+Verify desktop discovery through development OpenCloud:
 
 ```bash
 curl --fail --silent --show-error \
@@ -150,9 +167,22 @@ The response must advertise issuer
 `https://dev-id.fullcourseyellow.com/realms/fullcourseyellow`, client ID
 `OpenCloudDesktop`, and the `offline_access` scope.
 
-Finally, sign in with one user for each assigned role and inspect the OpenCloud
-logs for provisioning or role-mapping errors:
+Verify production independently:
 
 ```bash
-docker compose logs opencloud
+curl --fail --silent --show-error \
+  'https://cloud.fullcourseyellow.com/.well-known/webfinger?resource=https://cloud.fullcourseyellow.com&rel=http://openid.net/specs/connect/1.0/issuer&platform=desktop'
+```
+
+The production response must advertise issuer
+`https://id.fullcourseyellow.com/realms/fullcourseyellow`, client ID
+`OpenCloudDesktop`, and the `offline_access` scope. Neither response should
+reference the other environment's hostname.
+
+Finally, sign in to each environment with one user for every assigned role and
+inspect that Stack's OpenCloud logs for provisioning or role-mapping errors:
+
+```bash
+docker compose --project-name opencloud-dev logs opencloud
+docker compose --project-name opencloud-prod logs opencloud
 ```

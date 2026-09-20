@@ -5,12 +5,17 @@ services:
       # OpenCloud otherwise binds its proxy to loopback, which is unreachable
       # from Caddy on the shared Docker network.
       PROXY_HTTP_ADDR: "0.0.0.0:9200"
+      # Fail before deployment rather than silently using upstream test values.
+      OC_LDAP_BIND_PASSWORD: "${LDAP_BIND_PASSWORD:?Set LDAP_BIND_PASSWORD}"
+      OC_OIDC_ISSUER: "${IDP_ISSUER_URL:?Set IDP_ISSUER_URL}"
+      IDP_DOMAIN: "${IDP_DOMAIN:?Set IDP_DOMAIN}"
+      WEB_OPTION_ACCOUNT_EDIT_LINK_HREF: "${IDP_ACCOUNT_URL:?Set IDP_ACCOUNT_URL}"
     labels:
-      caddy: "${OC_DOMAIN:-dev-cloud.fullcourseyellow.com}"
+      caddy: "${OC_DOMAIN:?Set OC_DOMAIN}"
       caddy.import: "${CADDY_ACME_SNIPPET:-dns-acme-fcy}"
       caddy.reverse_proxy: "{{upstreams 9200}}"
 
-      harbordns.hostname: "${OC_DOMAIN:-dev-cloud.fullcourseyellow.com}"
+      harbordns.hostname: "${OC_DOMAIN:?Set OC_DOMAIN}"
       harbordns.type: A
       harbordns.cloudflare.proxied: "true"
       harbordns.conflict: update
@@ -21,12 +26,14 @@ services:
       caddy_net:
 
   euro-office:
+    environment:
+      JWT_SECRET: "${EURO_OFFICE_JWT_SECRET:?Set EURO_OFFICE_JWT_SECRET}"
     labels:
-      caddy: "${EURO_OFFICE_DOMAIN:-dev-office.fullcourseyellow.com}"
+      caddy: "${EURO_OFFICE_DOMAIN:?Set EURO_OFFICE_DOMAIN}"
       caddy.import: "${CADDY_ACME_SNIPPET:-dns-acme-fcy}"
       caddy.reverse_proxy: "{{upstreams 80}}"
 
-      harbordns.hostname: "${EURO_OFFICE_DOMAIN:-dev-office.fullcourseyellow.com}"
+      harbordns.hostname: "${EURO_OFFICE_DOMAIN:?Set EURO_OFFICE_DOMAIN}"
       harbordns.type: A
       harbordns.cloudflare.proxied: "true"
       harbordns.conflict: update
@@ -35,6 +42,10 @@ services:
     networks:
       opencloud-net:
       caddy_net:
+
+  ldap-server:
+    environment:
+      LDAP_ADMIN_PASSWORD: "${LDAP_BIND_PASSWORD:?Set LDAP_BIND_PASSWORD}"
 
 networks:
   caddy_net:
