@@ -12,6 +12,7 @@ small conflict surface.
 - Yjs collaborative editing
 - Separate FCY Keycloak issuers with just-in-time account provisioning
 - Private OpenLDAP storage for provisioned OpenCloud users and groups
+- Velocitas Imperium light and dark Web UI themes
 - Caddy reverse proxy and HarborDNS integration on the shared `caddy_net`
 - Local PosixFS storage by default, with optional S3-compatible storage
 
@@ -72,6 +73,22 @@ Production:  https://id.fullcourseyellow.com/realms/fullcourseyellow
 
 Do not change an issuer after users have been provisioned. The issuer and OIDC
 `sub` claim form each user's external identity.
+
+## Web Theme
+
+The FCY Compose overlay mounts the Velocitas Imperium theme from
+`fcy/theme/velocitas-imperium` into OpenCloud. The Web UI follows the user's
+saved light or dark preference and otherwise uses the operating-system color
+scheme.
+
+The theme uses the VI logos and the same warm light and charcoal dark palettes
+as the Keycloak theme. The racing hero appears on OpenCloud's plain shell,
+including password-protected public links, logout, and access-denied pages.
+Authentication itself redirects to the external Keycloak issuer, so Keycloak
+continues to own the interactive login screen.
+
+Theme files are part of the deployment and do not live in the persistent
+OpenCloud data volume. Restart the OpenCloud service after changing them.
 
 ## Komodo Stacks
 
@@ -227,6 +244,8 @@ Stack updates disabled so neither environment changes outside this workflow.
 Use this checklist before promotion:
 
 - OIDC login and first-login account provisioning
+- Light and dark theme switching on desktop and mobile
+- Password-protected public-link rendering with the themed hero
 - One login for every mapped OpenCloud role
 - WebFinger desktop and mobile discovery
 - File upload, download, sharing, and restart persistence
